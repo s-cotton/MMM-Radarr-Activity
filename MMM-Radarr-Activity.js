@@ -14,7 +14,7 @@ Module.register("MMM-Radarr-Activity", {
     defaults: {
         radarrProtocol: "http",
         radarrHost: "localhost",
-        radarrPort: "8989",
+        radarrPort: "7878",
         radarrAPIKey: "",
 
         displayType: "list",

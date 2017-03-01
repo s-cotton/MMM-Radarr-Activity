@@ -19,7 +19,7 @@ modules: [
     config: {
         radarrProtocol: "http",
         radarrHost: "localhost",
-        radarrPort: "8989",
+        radarrPort: "7878",
         radarrAPIKey: "",
         perPage: 15,
         scrollTimeout: 10000,
@@ -53,7 +53,7 @@ The following properties can be configured:
 		</tr>
 		<tr>
 			<td><code>radarrPort</code></td>
-			<td>8989 is the default, 80 if you are using a FQDN<br> This value is <b>REQUIRED</b></td>
+			<td>7878 is the default, 80 if you are using a FQDN<br> This value is <b>REQUIRED</b></td>
 		</tr>
 		<tr>
 			<td><code>radarrAPIKey</code></td>
