@@ -38,8 +38,17 @@ Module.register("MMM-Radarr-Activity", {
     updatesCollection: null,
     mainView: null,
 
-    getHeader: function(){
-        return this.data.header;
+    suspend: function(){
+        this.stopUpdateTimer();
+        if( this.mainView !== null ){
+            this.mainView.trigger("stopSlider");
+        }
+    },
+    resume: function(){
+        this.startUpdateTimer();
+        if( this.mainView !== null ){
+            this.mainView.trigger("startSlider");
+        }
     },
 
     // Subclass start method.
@@ -54,10 +63,22 @@ Module.register("MMM-Radarr-Activity", {
 
         self.getLatestActivity();
 
+        this.startUpdateTimer();
+
+    },
+
+    startUpdateTimer: function(){
+        var self = this;
+        if( moment().valueOf() - this.lastUpdate > this.config.updateInterval ){
+            this.getLatestActivity();
+        }
         this.updater = setInterval(function(){
             self.getLatestActivity();
         }, this.config.updateInterval );
+    },
 
+    stopUpdateTimer: function(){
+        clearInterval(this.updater);
     },
 
     setupModels: function(){
@@ -84,9 +105,16 @@ Module.register("MMM-Radarr-Activity", {
             tagName: "div",
             className: "single-activity",
             template: MMMRadarrActivity.Templates.slide,
-            initialize: function(){},
+            initialize: function(){
+                this.on("postrender", this.postRender, this);
+            },
             render: function(){
                 return this.template( this.model.toJSON() );
+            },
+            postRender: function(){
+                this.$el.find('.slide-image img').on('error',function(e){
+                    $(this).attr('src', self.file("images/no-image.png"));
+                });
             }
         });
         this.components.collections.updates = Backbone.Collection.extend({
@@ -113,6 +141,8 @@ Module.register("MMM-Radarr-Activity", {
                         model: update
                     }));
                 });
+                this.on("startSlider", this.startSlider, this);
+                this.on("stopSlider", this.stopSlider, this);
             },
             render: function(){
                 var that = this;
@@ -127,6 +157,12 @@ Module.register("MMM-Radarr-Activity", {
                     slides: "> div"
                 });
                 return this;
+            },
+            startSlider: function(){
+                this.$el.cycle('resume');
+            },
+            stopSlider: function(){
+                this.$el.cycle('pause');
             }
         });
     },
